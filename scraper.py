@@ -1,5 +1,6 @@
 import numpy as np 
 import pandas as pd
+import json
 import requests
 from bs4 import BeautifulSoup
 
@@ -87,3 +88,21 @@ def scrape_product_detail_page(product_detail_url):
     scrapped_data = final_dataset.__dict__
 
     return scrapped_data
+
+def main(name, urls):
+    data = []
+    for url in urls:
+        data.append(scrape_product_detail_page(url))
+    
+    with open('name', 'w') as outfile:
+        json.dump(data, outfile)
+    
+if __name__ == '__main__':
+    urls = [
+        'https://www.lapierre-bike.cz/produkt/spicy-cf-69/5943',
+        'https://www.lapierre-bike.cz/produkt/lapierre-shaper-30-disc/6021',
+        'https://www.lapierre-bike.cz/produkt/trekking-30/6011',
+        'https://www.lapierre-bike.cz/produkt/overvolt-glp-elite-b500/5956',
+        'https://www.lapierre-bike.cz/produkt/prorace-16-girl/5985'
+    ]
+    main("top-5-bikes.json", urls)
