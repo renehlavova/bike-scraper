@@ -1,20 +1,20 @@
-import numpy as np 
-import pandas as pd
 import json
 import requests
 from bs4 import BeautifulSoup
 
 def scrape_product_detail_page(product_detail_url):
+    bicycle = dict()
+    parameters = dict()
 
     # scrape data
     res = requests.get(product_detail_url)
     soup = BeautifulSoup(res.content, 'html.parser')
 
     # model
-    model = soup.title.text
+    bicycle['model'] = soup.title.text
     
     # url
-    url = soup.select('a')[0].get('href') 
+    bicycle['url'] = soup.select('a')[0].get('href') 
     
     # preprocess image data, we are looking for img with alt model
     # condition for missings, even though main photo should always be present
@@ -27,11 +27,11 @@ def scrape_product_detail_page(product_detail_url):
         if alt == soup.title.text:
             image_data.append(src)
     
-    main_photo_path = (image_data[0] if image_data else None)
-    additional_photo_paths = (image_data[1:] if image_data else None)
+    bicycle['main_photo_path'] = (image_data[0] if image_data else None)
+    bicycle['additional_photo_paths'] = (image_data[1:] if image_data else None)
     
     # price
-    price = int(soup.find('input', attrs={'name':'cena_obj'}).get('value'))
+    bicycle['price'] = int(soup.find('input', attrs={'name':'cena_obj'}).get('value'))
     
     # preprocess spec
     # find all tables (there are two 'spec' tables, we need both)
@@ -58,29 +58,14 @@ def scrape_product_detail_page(product_detail_url):
         elif row == 'Hmotnost':
             weight_prep.append(flat_list[i+1].get_text(strip=True))
     
-    model_year = int(model_year_prep[0])
-    weight = (weight_prep[0] if weight_prep else None)
-    frame = (frame_prep[0] if frame_prep else None)
-    
-    class NewClass(object): pass
-    parameters = NewClass()
-    vars = ['weight', 'frame']
-    for v in vars: 
-        setattr(parameters, v, eval(v)) 
-        
-    class NewClass(object): pass
-    final_dataset = NewClass()
-    cols = ['model', 'url', 'main_photo_path', 
-            'additional_photo_paths', 'price', 
-            'model_year']
-    for c in cols: 
-        setattr(final_dataset, c, eval(c)) 
-        
+    bicycle['model_year'] = int(model_year_prep[0])
+    parameters['weight'] = (weight_prep[0] if weight_prep else None)
+    parameters['frame'] = (frame_prep[0] if frame_prep else None)
+   
     # nest parameters into final dataset
-    final_dataset.__dict__['parameters'] = parameters.__dict__
-    scrapped_data = final_dataset.__dict__
+    bicycle['parameters'] = parameters
 
-    return scrapped_data
+    return bicycle
 
 def main(name, urls):
     data = []
