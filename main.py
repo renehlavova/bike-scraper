@@ -87,7 +87,7 @@ def main(name, urls):
     for url in urls:
         data.append(scrape_product_detail_page(url))
     
-    with open('name', 'w') as outfile:
+    with open(name, 'w') as outfile:
         json.dump(data, outfile)
     
 if __name__ == '__main__':
