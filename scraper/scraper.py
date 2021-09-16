@@ -84,5 +84,6 @@ def scrape_product_detail_page(product_detail_url):
         
     # nest parameters into final dataset
     final_dataset.__dict__['parameters'] = parameters.__dict__
+    scrapped_data = final_dataset.__dict__
 
-    return final_dataset.__dict__
+    return scrapped_data
