@@ -3,6 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 
 def scrape_product_detail_page(product_detail_url):
+    """Function to scrape data from Lapierre bicycles 
+    https://www.lapierre-bike.cz
+    It returns a dictionary."""
+    
     bicycle = dict()
     parameters = dict()
 
